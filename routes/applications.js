@@ -90,6 +90,7 @@ router.post('/submit', ApplicationController.submitApplication);
 
 // Protected routes (for HR users) 
 router.get('/', authenticateHR, ApplicationController.getAllApplications);
+router.get('/accepted_to_join', authenticateHR, ApplicationController.getAcceptedToJoinApplications);
 router.get('/stats', authenticateHR, ApplicationController.getApplicationStats);
 router.get('/export/excel', authenticateHR, ApplicationController.exportApplicationsToExcel);
 router.get('/:id', authenticateHR, ApplicationController.getApplicationById);

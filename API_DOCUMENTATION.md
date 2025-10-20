@@ -20,9 +20,7 @@ The system uses **HTTP-Only cookies** for secure authentication. Two methods are
 Authorization: Bearer <your_jwt_token>
 
 ```
-
 **Note:** HTTP-Only cookies take precedence if both are present.
-
 ---
 
 ## 🔐 Authentication Endpoints
@@ -198,7 +196,6 @@ Set-Cookie: authToken=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0
   }
 }
 ```
-
 ---
 
 ### 6. Get All HR Users
@@ -478,7 +475,7 @@ profileImage: <file>          // JPG/PNG/GIF file
 - `page` (integer, default: 1) - Page number
 - `limit` (integer, default: 10, max: 100) - Items per page
 - `search` (string) - Search in applicant names
-- `status` (string) - Filter by status: `pending`, `reviewed`, `accepted`, `rejected`
+- `status` (string) - Filter by status: `pending`, `reviewed`, `accepted`, `rejected`, `accepted_for_interview`, `accepted_to_join`
 - `jobTitle` (string) - Filter by job title
 - `fromDate` (date) - Filter applications from date (YYYY-MM-DD)
 - `toDate` (date) - Filter applications to date (YYYY-MM-DD)
@@ -489,6 +486,8 @@ profileImage: <file>          // JPG/PNG/GIF file
 ```
 GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdAt&sortOrder=DESC
 ```
+
+**Note:** By default, this endpoint excludes applications with status `accepted_to_join`. To include them, explicitly filter by `status=accepted_to_join` or use the dedicated `/applications/accepted-to-join` endpoint.
 
 **Response (Success - 200):**
 ```json
@@ -619,7 +618,59 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
 
 ---
 
-### 12. Update Application Status (HR Only)
+### 12. Get Accepted to Join Applications (HR Only)
+**GET** `/applications/accepted_to_join`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Query Parameters:**
+- `page` (integer, default: 1) - Page number
+- `limit` (integer, default: 10, max: 100) - Items per page
+- `search` (string) - Search in applicant names
+- `jobTitle` (string) - Filter by job title
+
+**Example Request:**
+```
+GET /api/applications/accepted_to_join?page=1&limit=10&search=John
+```
+
+**Response (Success - 200):**
+```json
+{
+  "success": true,
+  "data": {
+    "applications": [
+      {
+        "applicationId": 1,
+        "jobTitle": "Software Developer",
+        "status": "accepted_to_join",
+        "submittedAt": "2025-09-17T10:30:00.000Z",
+        "createdAt": "2025-09-17T10:30:00.000Z",
+        "updatedAt": "2025-09-17T12:45:00.000Z",
+        "cvPath": "uploads/cv/cv-1695804600000-123456789.pdf",
+        "personalInfo": {
+          "name": "John Doe",
+          "whatsappNumber": "+1234567890",
+          "profileImagePath": "uploads/images/profileImage-1695804600000-123456789.jpg"
+        }
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 2,
+      "totalCount": 12,
+      "hasNextPage": true,
+      "hasPrevPage": false
+    }
+  }
+}
+```
+
+**Note:** This endpoint only returns applications with status `accepted_to_join`. These applications are excluded from the main `/applications` endpoint by default.
+
+---
+
+### 13. Update Application Status (HR Only)
 **PUT** `/applications/:id/status`
 
 **Headers:** `Authorization: Bearer <token>`
@@ -630,7 +681,7 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
 **Request Body:**
 ```json
 {
-  "status": "reviewed",  // pending, reviewed, accepted, rejected
+  "status": "reviewed",  // pending, reviewed, accepted, rejected, accepted_for_interview, accepted_to_join
   "note": "Initial review completed"  // optional
 }
 ```
@@ -649,7 +700,7 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
 
 ---
 
-### 13. Get Application Statistics (HR Only)
+### 14. Get Application Statistics (HR Only)
 **GET** `/applications/stats`
 
 **Headers:** `Authorization: Bearer <token>`
@@ -664,7 +715,9 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
       "pending": 45,
       "reviewed": 60,
       "accepted": 25,
-      "rejected": 20
+      "rejected": 20,
+      "accepted_for_interview": 8,
+      "accepted_to_join": 12
     }
   }
 }
@@ -674,7 +727,7 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
 
 ## 🌐 General Endpoints
 
-### 14. Health Check
+### 15. Health Check
 **GET** `/health`
 
 **Response (Success - 200):**
@@ -687,7 +740,7 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
 }
 ```
 
-### 15. Root Endpoint
+### 16. Root Endpoint
 **GET** `/`
 
 **Response (Success - 200):**
@@ -709,7 +762,7 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
 
 ## 📁 File Access
 
-### 16. Access Uploaded Files
+### 17. Access Uploaded Files
 **GET** `/uploads/cv/:filename`
 **GET** `/uploads/images/:filename`
 
@@ -769,6 +822,8 @@ GET http://localhost:5000/uploads/images/profileImage-1695804600000-123456789.jp
 - `reviewed`
 - `accepted`
 - `rejected`
+- `accepted_for_interview`
+- `accepted_to_join`
 
 ### Skill Levels:
 - `weak`

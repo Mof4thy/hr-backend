@@ -196,6 +196,9 @@ class ApplicationController {
       
       if (status) {
         whereClause.status = status;
+      } else {
+        // Default: exclude accepted_to_join from main list
+        whereClause.status = { [Op.ne]: 'accepted_to_join' };
       }
       
       if (jobTitle) {
@@ -342,7 +345,7 @@ class ApplicationController {
       const { id } = req.params;
       const { status } = req.body;
 
-      const validStatuses = ['pending', 'reviewed', 'accepted', 'rejected'];
+      const validStatuses = ['pending', 'reviewed', 'accepted', 'rejected', 'accepted_for_interview', 'accepted_to_join'];
       
       if (!validStatuses.includes(status)) {
         return res.status(400).json({
@@ -361,6 +364,12 @@ class ApplicationController {
       }
 
       await application.update({ status });
+
+      // Optional onboarding hook for accepted_to_join status
+      if (status === 'accepted_to_join') {
+        // TODO: Implement OnboardingService.startOnboarding(application)
+        console.log(`Application ${application.applicationId} accepted to join - onboarding can be triggered here`);
+      }
 
       res.json({
         success: true,
@@ -413,6 +422,82 @@ class ApplicationController {
       res.status(500).json({
         success: false,
         message: 'Failed to get application statistics'
+      });
+    }
+  }
+
+  /**
+   * Get accepted to join applications (HR only)
+   * params: page, limit, search, jobTitle
+   * return: applications, pagination
+   */
+  static async getAcceptedToJoinApplications(req, res) {
+    try {
+      const { page = 1, limit = 10, search = '', jobTitle = '' } = req.query;
+      const offset = (page - 1) * limit;
+
+      // Build where clause for Application table - only accepted_to_join
+      const whereClause = {
+        status: 'accepted_to_join'
+      };
+      
+      if (jobTitle) {
+        whereClause.jobTitle = {
+          [Op.like]: `%${jobTitle}%`
+        };
+      }
+
+      // Build include for search in PersonalInfo
+      const includeOptions = [
+        {
+          model: PersonalInfo,
+          as: 'personalInfo',
+          attributes: ['name', 'whatsappNumber', 'profileImagePath'],
+          required: false // LEFT JOIN to include applications even without personalInfo
+        }
+      ];
+
+      // Add search condition for PersonalInfo if search term provided
+      if (search) {
+        includeOptions[0].where = {
+          [Op.or]: [
+            { name: { [Op.like]: `%${search}%` } },
+            { whatsappNumber: { [Op.like]: `%${search}%` } }
+          ]
+        };
+        includeOptions[0].required = true; // INNER JOIN when searching
+      }
+
+      const { count, rows } = await Application.findAndCountAll({
+        where: whereClause,
+        include: includeOptions,
+        limit: parseInt(limit),
+        offset: parseInt(offset),
+        order: [['createdAt', 'DESC']],
+        attributes: [
+          'applicationId', 'jobTitle', 'educationStatus', 'status', 'createdAt', 'updatedAt', 'cvPath'
+        ]
+      });
+
+      res.json({
+        success: true,
+        data: {
+          applications: rows,
+          pagination: {
+            currentPage: parseInt(page),
+            totalPages: Math.ceil(count / limit),
+            totalCount: count,
+            hasNextPage: page < Math.ceil(count / limit),
+            hasPrevPage: page > 1
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error('Get accepted to join applications error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get accepted to join applications'
       });
     }
   }
@@ -477,9 +562,11 @@ class ApplicationController {
         });
       }
 
-      // Transform data for Excel - comprehensive export matching table data
+      // Transform data for Excel - comprehensive export with all personal info and experience
       const excelData = applications.map(app => {
         const personalInfo = app.personalInfo || {};
+        const currentJob = app.currentJob || {};
+        const experiences = app.experiences || [];
 
         // Format education status
         let educationStatusText = 'Not specified';
@@ -491,14 +578,42 @@ class ApplicationController {
           educationStatusText = app.educationStatus;
         }
 
+        // Format work experience
+        const experienceText = experiences.map(exp => 
+          `${exp.company || 'N/A'} - ${exp.role || 'N/A'} (${exp.fromDate || 'N/A'} to ${exp.toDate || 'N/A'})`
+        ).join('; ') || 'No experience listed';
+
+        // Format current employment
+        const currentEmploymentText = currentJob.isCurrentlyEmployed 
+          ? `${currentJob.company || 'N/A'} - ${currentJob.role || 'N/A'} (Salary: ${currentJob.salary || 'N/A'})`
+          : 'Not currently employed';
+
         return {
+          // Basic Info
           'ID': app.applicationId || '',
           'Name': personalInfo.name || '',
-          'Position': app.jobTitle || '',
-          'WhatsApp Number': personalInfo.whatsappNumber || personalInfo.mobileNumber || '',
-          'Education Status': educationStatusText,
+          'Applied Position': app.jobTitle || '',
           'Application Status': app.status || '',
-          'Applied Date': app.createdAt ? new Date(app.createdAt).toLocaleDateString('en-GB') : ''
+          'Applied Date': app.createdAt ? new Date(app.createdAt).toLocaleDateString('en-GB') : '',
+          
+          // Personal Information
+          'Date of Birth': personalInfo.dateOfBirth || '',
+          'Place of Birth': personalInfo.placeOfBirth || '',
+          'Address': personalInfo.address || '',
+          'National ID': personalInfo.nationalId || '',
+          'Nationality': personalInfo.nationality || '',
+          'Mobile Number': personalInfo.mobileNumber || '',
+          'WhatsApp Number': personalInfo.whatsappNumber || '',
+          'Emergency Contact': personalInfo.emergencyNumber || '',
+          'Military Service Status': personalInfo.militaryServiceStatus || '',
+          'Social Status': personalInfo.socialStatus || '',
+          'Has Vehicle': personalInfo.hasVehicle ? 'Yes' : 'No',
+          'Driving License': personalInfo.drivingLicense || '',
+          'Education Status': educationStatusText,
+          
+          // Employment Information
+          'Current Employment': currentEmploymentText,
+          'Work Experience': experienceText
         };
       });
 

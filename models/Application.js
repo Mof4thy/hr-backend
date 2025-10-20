@@ -87,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'pending',
       validate: {
-        isIn: [['pending', 'reviewed', 'accepted', 'rejected']]
+        isIn: [['pending', 'reviewed', 'accepted', 'rejected', 'accepted_for_interview', 'accepted_to_join']]
       }
     },
     
