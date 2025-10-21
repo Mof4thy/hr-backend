@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(50),
       allowNull: false,
       validate: {
-        isIn: [['weak', 'good', 'very_good', 'excellent']]
+        isIn: [['ضعيف', 'جيد', 'جيد جداً', 'ممتاز']]
       }
     }
   }, {

@@ -30,21 +30,21 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(50),
       allowNull: true,
       validate: {
-        isIn: [['weak', 'good', 'very_good', 'excellent']]
+        isIn: [['ضعيف', 'جيد', 'جيد جداً', 'ممتاز']]
       }
     },
     excel: {
       type: DataTypes.STRING(50),
       allowNull: true,
       validate: {
-        isIn: [['weak', 'good', 'very_good', 'excellent']]
+        isIn: [['ضعيف', 'جيد', 'جيد جداً', 'ممتاز']]
       }
     },
     powerpoint: {
       type: DataTypes.STRING(50),
       allowNull: true,
       validate: {
-        isIn: [['weak', 'good', 'very_good', 'excellent']]
+        isIn: [['ضعيف', 'جيد', 'جيد جداً', 'ممتاز']]
       }
     }
   }, {
