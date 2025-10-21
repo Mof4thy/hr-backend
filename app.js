@@ -9,15 +9,17 @@ const app = express();
 
 
 
-app.use(securityHeaders);
-app.use(basicSQLProtection);
-app.use('/api/', basicLimiter);
-
 // CORS middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true
 }));
+
+
+app.use(securityHeaders);
+app.use(basicSQLProtection);
+app.use('/api/', basicLimiter);
+
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
