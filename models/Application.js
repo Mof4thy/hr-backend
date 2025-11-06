@@ -91,6 +91,12 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     
+    // Additional Comments
+    comments: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
+    
     // Timestamps
     submittedAt: {
       type: DataTypes.DATE,

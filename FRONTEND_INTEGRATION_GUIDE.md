@@ -31,12 +31,14 @@ const submitCompleteApplication = async (formData, files) => {
   
   // 1. Job Information
   submitData.append('jobTitle', formData.jobTitle);
+  submitData.append('comments', formData.comments || '');
   
   // 2. Personal Information (as JSON string)
   submitData.append('personalInfo', JSON.stringify({
     name: formData.personalInfo.name,
     dateOfBirth: formData.personalInfo.dateOfBirth,
-    placeOfBirth: formData.personalInfo.placeOfBirth,
+    governorate: formData.personalInfo.placeOfBirth,
+    sex: formData.personalInfo.sex,
     address: formData.personalInfo.address,
     nationalId: formData.personalInfo.nationalId,
     nationality: formData.personalInfo.nationality,
@@ -112,12 +114,14 @@ const submitCompleteApplication = async (formData, files) => {
 const completeApplicationData = {
   // Job Information (Required)
   jobTitle: "Software Developer",
+  comments: "I am very interested in this position and would love to contribute to your team.", // Optional
   
   // Personal Information (Required)
   personalInfo: {
     name: "John Doe",
     dateOfBirth: "1990-01-15",
-    placeOfBirth: "New York",
+    governorate: "New York",
+    sex: "Male",
     address: "123 Main Street, City, State",
     nationalId: "123456789",
     nationality: "American",

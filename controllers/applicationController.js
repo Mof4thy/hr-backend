@@ -598,7 +598,8 @@ class ApplicationController {
           
           // Personal Information
           'Date of Birth': personalInfo.dateOfBirth || '',
-          'Place of Birth': personalInfo.placeOfBirth || '',
+          'Government': personalInfo.governorate || '',
+          'Sex': personalInfo.sex || '',
           'Address': personalInfo.address || '',
           'National ID': personalInfo.nationalId || '',
           'Nationality': personalInfo.nationality || '',
@@ -613,7 +614,10 @@ class ApplicationController {
           
           // Employment Information
           'Current Employment': currentEmploymentText,
-          'Work Experience': experienceText
+          'Work Experience': experienceText,
+          
+          // Additional Information
+          'Comments': app.comments || ''
         };
       });
 

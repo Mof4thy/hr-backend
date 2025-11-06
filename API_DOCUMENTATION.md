@@ -340,13 +340,15 @@ Set-Cookie: authToken=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0
 **Form Data:**
 ```javascript
 // Job Information
-jobTitle: "Software Developer"
+jobTitle: "Software Developer",
+comments: "I am very interested in this position and would love to contribute to your team."
 
 // Personal Information (nested object)
 personalInfo: {
   name: "John Doe",
   dateOfBirth: "1990-01-15",
-  placeOfBirth: "New York",
+  governorate: "New York",
+  sex: "Male",
   address: "123 Main Street, City, State",
   nationalId: "123456789",
   nationality: "American",
@@ -498,6 +500,7 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
       {
         "applicationId": 1,
         "jobTitle": "Software Developer",
+        "comments": "I am very interested in this position and would love to contribute to your team.",
         "status": "pending",
         "submittedAt": "2025-09-17T10:30:00.000Z",
         "createdAt": "2025-09-17T10:30:00.000Z",
@@ -539,6 +542,7 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
     "application": {
       "applicationId": 1,
       "jobTitle": "Software Developer",
+      "comments": "I am very interested in this position and would love to contribute to your team.",
       "cvPath": "uploads/cv/cv-1695804600000-123456789.pdf",
       "status": "pending",
       "submittedAt": "2025-09-17T10:30:00.000Z",
@@ -547,7 +551,8 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
       "personalInfo": {
         "name": "John Doe",
         "dateOfBirth": "1990-01-15",
-        "placeOfBirth": "New York",
+        "governorate": "New York",
+        "sex": "Male",
         "address": "123 Main Street, City, State",
         "nationalId": "123456789",
         "nationality": "American",
@@ -643,6 +648,7 @@ GET /api/applications/accepted_to_join?page=1&limit=10&search=John
       {
         "applicationId": 1,
         "jobTitle": "Software Developer",
+        "comments": "I am very interested in this position and would love to contribute to your team.",
         "status": "accepted_to_join",
         "submittedAt": "2025-09-17T10:30:00.000Z",
         "createdAt": "2025-09-17T10:30:00.000Z",

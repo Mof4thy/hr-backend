@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(50),
       allowNull: true
     },
-    placeOfBirth: {
+    governorate: {
       type: DataTypes.STRING(150),
       allowNull: true
     },
@@ -81,6 +81,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     profileImagePath: {
       type: DataTypes.STRING(255),
+      allowNull: true
+    },
+    sex: {
+      type: DataTypes.STRING(10),
       allowNull: true
     }
   }, {
