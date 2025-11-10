@@ -348,7 +348,7 @@ personalInfo: {
   name: "John Doe",
   dateOfBirth: "1990-01-15",
   governorate: "New York",
-  sex: "Male",
+  gender: "Male",
   address: "123 Main Street, City, State",
   nationalId: "123456789",
   nationality: "American",

@@ -599,7 +599,7 @@ class ApplicationController {
           // Personal Information
           'Date of Birth': personalInfo.dateOfBirth || '',
           'Government': personalInfo.governorate || '',
-          'Sex': personalInfo.sex || '',
+          'Gender': personalInfo.gender || '',
           'Address': personalInfo.address || '',
           'National ID': personalInfo.nationalId || '',
           'Nationality': personalInfo.nationality || '',
