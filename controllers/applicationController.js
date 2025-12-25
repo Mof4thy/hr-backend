@@ -569,14 +569,15 @@ class ApplicationController {
         const experiences = app.experiences || [];
 
         // Format education status
-        let educationStatusText = 'Not specified';
-        if (app.educationStatus === 'student') {
-          educationStatusText = 'Student (طالب)';
-        } else if (app.educationStatus === 'graduate') {
-          educationStatusText = 'Graduate (خريج)';
-        } else if (app.educationStatus) {
-          educationStatusText = app.educationStatus;
-        }
+        const educationStatusMap = {
+          'higher-qualification': 'مؤهل عالي',
+          'above-intermediate-qualification': 'مؤهل فوق متوسط',
+          'preparatory': 'إعدادية',
+          'primary': 'ابتدائية',
+          'illiterate': 'محو أمية',
+          'no-qualification': 'بدون مؤهل'
+        };
+        const educationStatusText = educationStatusMap[app.educationStatus] || app.educationStatus || 'Not specified';
 
         // Format work experience
         const experienceText = experiences.map(exp => 
@@ -598,13 +599,16 @@ class ApplicationController {
           
           // Personal Information
           'Date of Birth': personalInfo.dateOfBirth || '',
+          'Age': personalInfo.age || '',
           'Government': personalInfo.governorate || '',
+          'Area': personalInfo.area || '',
           'Gender': personalInfo.gender || '',
           'Address': personalInfo.address || '',
           'National ID': personalInfo.nationalId || '',
           'Nationality': personalInfo.nationality || '',
           'Mobile Number': personalInfo.mobileNumber || '',
           'WhatsApp Number': personalInfo.whatsappNumber || '',
+          'Email': personalInfo.email || '',
           'Emergency Contact': personalInfo.emergencyNumber || '',
           'Military Service Status': personalInfo.militaryServiceStatus || '',
           'Social Status': personalInfo.socialStatus || '',

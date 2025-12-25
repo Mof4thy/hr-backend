@@ -68,10 +68,17 @@ module.exports = (sequelize, DataTypes) => {
     
     // Education Status
     educationStatus: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(50),
       allowNull: true,
       validate: {
-        isIn: [['student', 'graduate']]
+        isIn: [[
+          'higher-qualification',
+          'above-intermediate-qualification',
+          'preparatory',
+          'primary',
+          'illiterate',
+          'no-qualification'
+        ]]
       }
     },
     

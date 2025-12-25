@@ -31,19 +31,23 @@ const submitCompleteApplication = async (formData, files) => {
   
   // 1. Job Information
   submitData.append('jobTitle', formData.jobTitle);
+  submitData.append('educationStatus', formData.educationStatus); // Required: 'higher-qualification', 'above-intermediate-qualification', 'preparatory', 'primary', 'illiterate', 'no-qualification'
   submitData.append('comments', formData.comments || '');
   
   // 2. Personal Information (as JSON string)
   submitData.append('personalInfo', JSON.stringify({
     name: formData.personalInfo.name,
     dateOfBirth: formData.personalInfo.dateOfBirth,
-    governorate: formData.personalInfo.placeOfBirth,
+    age: formData.personalInfo.age,
+    governorate: formData.personalInfo.governorate,
+    area: formData.personalInfo.area,
     gender: formData.personalInfo.gender,
     address: formData.personalInfo.address,
     nationalId: formData.personalInfo.nationalId,
     nationality: formData.personalInfo.nationality,
-    phoneNumber: formData.personalInfo.phoneNumber,
+    whatsappNumber: formData.personalInfo.whatsappNumber,
     mobileNumber: formData.personalInfo.mobileNumber,
+    email: formData.personalInfo.email,
     emergencyNumber: formData.personalInfo.emergencyNumber,
     militaryServiceStatus: formData.personalInfo.militaryServiceStatus,
     socialStatus: formData.personalInfo.socialStatus,
@@ -120,16 +124,19 @@ const completeApplicationData = {
   personalInfo: {
     name: "John Doe",
     dateOfBirth: "1990-01-15",
-    governorate: "New York",
-    gender: "Male",
+    age: 34,
+    governorate: "Cairo",
+    area: "Maadi",
+    gender: "ذكر", // "ذكر" or "أنثى"
     address: "123 Main Street, City, State",
-    nationalId: "123456789",
-    nationality: "American",
-    phoneNumber: "+1234567890",
-    mobileNumber: "+1234567890",
+    nationalId: "12345678901234",
+    nationality: "Egyptian",
+    whatsappNumber: "+201234567890",
+    mobileNumber: "+201234567890",
+    email: "john.doe@example.com", // Optional
     emergencyNumber: "+0987654321",
-    militaryServiceStatus: "Completed", // "Completed", "Exempt", "Pending"
-    socialStatus: "Single", // "Single", "Married", "Divorced", "Widowed"
+    militaryServiceStatus: "Completed", // Only for males: "Completed", "Exempt", "Pending"
+    socialStatus: "Single", // "Single", "Married", "Divorced", "Widowed (male)", "Widowed (female)"
     hasVehicle: true,
     drivingLicense: "Class B"
   },
@@ -403,3 +410,68 @@ curl -X POST http://localhost:5000/api/applications/submit \
 ```
 
 Your backend is already optimized for single-request submissions with full transaction support! 🚀
+
+---
+
+## 📋 Valid Values Reference
+
+### Education Status Values
+```javascript
+const educationStatusOptions = [
+  'higher-qualification',           // مؤهل عالي
+  'above-intermediate-qualification', // مؤهل فوق متوسط
+  'preparatory',                   // إعدادية
+  'primary',                       // ابتدائية
+  'illiterate',                    // محو أمية
+  'no-qualification'               // بدون مؤهل
+];
+```
+
+### Area/District Options
+```javascript
+const areaOptions = [
+  'وسط البلد',
+  'المعادي',
+  'مصر الجديدة',
+  'الزمالك',
+  'المهندسين',
+  'الدقي',
+  'الجيزة',
+  'شبرا',
+  'مدينة نصر',
+  'التجمع الخامس',
+  'الشيخ زايد',
+  'أكتوبر',
+  'العبور',
+  'القاهرة الجديدة',
+  'أخرى'
+];
+```
+
+### Gender Values
+```javascript
+const genderOptions = [
+  'ذكر',  // Male
+  'أنثى'  // Female
+];
+```
+
+### Military Service Status (Males Only)
+```javascript
+const militaryServiceOptions = [
+  'Completed',
+  'Exempt',
+  'Pending'
+];
+```
+
+### Social Status
+```javascript
+const socialStatusOptions = [
+  'Single',
+  'Married',
+  'Divorced',
+  'Widowed (male)',   // For males
+  'Widowed (female)'  // For females
+];
+```
