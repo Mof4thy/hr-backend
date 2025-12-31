@@ -212,7 +212,7 @@ class ApplicationController {
         {
           model: PersonalInfo,
           as: 'personalInfo',
-          attributes: ['name', 'whatsappNumber', 'profileImagePath'],
+          attributes: ['name', 'whatsappNumber', 'profileImagePath', 'age', 'governorate', 'area', 'gender'],
           required: false // LEFT JOIN to include applications even without personalInfo
         }
       ];
@@ -452,7 +452,7 @@ class ApplicationController {
         {
           model: PersonalInfo,
           as: 'personalInfo',
-          attributes: ['name', 'whatsappNumber', 'profileImagePath'],
+          attributes: ['name', 'whatsappNumber', 'profileImagePath', 'age', 'governorate', 'area', 'gender'],
           required: false // LEFT JOIN to include applications even without personalInfo
         }
       ];

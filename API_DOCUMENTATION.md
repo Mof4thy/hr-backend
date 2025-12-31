@@ -511,8 +511,12 @@ GET /api/applications?page=1&limit=10&status=pending&search=John&sortBy=createdA
         "cvPath": "uploads/cv/cv-1695804600000-123456789.pdf",
         "personalInfo": {
           "name": "John Doe",
-          "phoneNumber": "+1234567890",
-          "profileImagePath": "uploads/images/profileImage-1695804600000-123456789.jpg"
+          "whatsappNumber": "+201234567890",
+          "profileImagePath": "uploads/images/profileImage-1695804600000-123456789.jpg",
+          "age": 34,
+          "governorate": "Cairo",
+          "area": "Maadi",
+          "gender": "ذكر"
         }
       }
     ],
